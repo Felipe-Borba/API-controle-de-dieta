@@ -1,0 +1,22 @@
+{
+  "name": "api-controle-de-dieta",
+  "version": "1.0.0",
+  "description": "caguei",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Felipe-Borba/API-controle-de-dieta.git"
+  },
+  "keywords": [
+    "trabalho"
+  ],
+  "author": "Felipe borba, Andre Santo, Leonardo Vieira",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Felipe-Borba/API-controle-de-dieta/issues"
+  },
+  "homepage": "https://github.com/Felipe-Borba/API-controle-de-dieta#readme"
+}
