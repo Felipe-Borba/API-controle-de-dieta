@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Felipe-Borba/API-controle-de-dieta#readme",
   "dependencies": {
+    "@prisma/client": "^5.11.0",
     "express": "^4.19.2"
   },
   "devDependencies": {
