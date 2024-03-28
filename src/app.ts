@@ -1,14 +1,11 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 
 const app = express();
-
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.log(`${req.method} ${req.baseUrl} - ${err.message}`);
+  res.status(400).send({ error: err.message });
 });
 
-const PORT = 8080;
-app.listen(PORT, () => {
-  console.log(`http://localhost:${PORT}`);
-});
+export default app;
