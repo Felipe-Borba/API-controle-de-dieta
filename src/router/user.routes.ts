@@ -1,8 +1,8 @@
-import express from "express";
+import { Router } from "express";
 import { body } from "express-validator";
 import UserController from "../controller/user-controller";
 
-const router = express.Router();
+const router = Router();
 const controller = new UserController();
 
 router.post(
