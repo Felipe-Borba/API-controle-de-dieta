@@ -1,7 +1,9 @@
-import { sign } from "jsonwebtoken";
+import { PrismaClient } from "@prisma/client";
+import { sign, verify } from "jsonwebtoken";
 import supertest from "supertest";
 
 const request = supertest("http://localhost:3333");
+const prisma = new PrismaClient();
 
 describe("/auth", () => {
   describe("GET /public", () => {
@@ -15,15 +17,16 @@ describe("/auth", () => {
 
   describe("/login", () => {
     test("given correct credentials, should return jwt token", async () => {
-      const userRes = await request.get("/user/");
+      const user = await prisma.user.findUniqueOrThrow({
+        where: { email: "dev@email.com" },
+      });
+      const token = sign({ user }, "development", {
+        expiresIn: 86400, // expira em 24 horas
+      });
 
       const result = await request
         .post("/auth/login")
         .send({ email: "dev@email.com", password: "123123123" });
-
-      const token = sign({ user: userRes.body[0] }, "development", {
-        expiresIn: 86400, // expira em 24 horas
-      });
 
       expect(result.status).toBe(200);
       expect(result.body).toEqual({ token });
@@ -50,8 +53,10 @@ describe("/auth", () => {
     });
 
     test("given user authenticated, should return ok", async () => {
-      const userRes = await request.get("/user/");
-      const token = sign({ user: userRes.body[0] }, "development", {
+      const user = await prisma.user.findUniqueOrThrow({
+        where: { email: "dev@email.com" },
+      });
+      const token = sign({ user }, "development", {
         expiresIn: 86400, // expira em 24 horas
       });
 
@@ -61,6 +66,32 @@ describe("/auth", () => {
 
       expect(result.status).toBe(200);
       expect(result.body).toEqual({ message: "funcionou" });
+    });
+  });
+
+  describe("GET /me", () => {
+    test("given user unauthenticated, should return error", async () => {
+      const result = await request.get("/auth/me");
+
+      expect(result.status).toBe(401);
+      expect(result.body).toEqual({ message: "Falha ao autenticar o token." });
+    });
+
+    test("given user authenticated, should return jwt decrypted", async () => {
+      const user = await prisma.user.findUniqueOrThrow({
+        where: { email: "dev@email.com" },
+      });
+      const token = sign({ user }, "development", {
+        expiresIn: 86400, // expira em 24 horas
+      });
+      const jwtPayload = verify(token, "development");
+
+      const result = await request
+        .get("/auth/me")
+        .set("authorization", `Bearer ${token}`);
+
+      expect(result.status).toBe(200);
+      expect(result.body).toEqual(jwtPayload);
     });
   });
 });
