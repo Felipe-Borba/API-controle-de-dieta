@@ -1,55 +1,55 @@
 import { PrismaClient } from "@prisma/client";
+import { hash } from "bcryptjs";
 import { NextFunction, Request, Response } from "express";
 
+const prisma = new PrismaClient();
+
 export default class UserController {
-  prisma;
-
-  constructor() {
-    this.prisma = new PrismaClient();
-  }
-
   async create(request: Request, response: Response, next: NextFunction) {
-    const { name, email } = request.body;
+    const { name, email, password } = request.body;
 
-    const user = await this.prisma.user.create({ data: { name, email } });
+    const hashedPassword = await hash(password, 8);
+    const user = await prisma.user.create({
+      data: { name, email, password: hashedPassword },
+    });
 
-    response.json(user);
+    response.json(user); // TODO hide password
   }
 
   async update(request: Request, response: Response, next: NextFunction) {
-    const { name, email, id } = request.body;
+    const { name, email, id, password } = request.body;
 
-    const user = await this.prisma.user.update({
+    const user = await prisma.user.update({
       where: { id },
-      data: { name, email },
+      data: { name, email, password },
     });
 
-    response.json(user);
+    response.json(user); // TODO hide password
   }
 
   async delete(request: Request, response: Response, next: NextFunction) {
     const { id } = request.params;
 
-    const user = await this.prisma.user.delete({
+    const user = await prisma.user.delete({
       where: { id },
     });
 
-    response.json(user);
+    response.json(user); //TODO hide password
   }
 
   async list(request: Request, response: Response, next: NextFunction) {
-    const user = await this.prisma.user.findMany();
+    const user = await prisma.user.findMany();
 
-    response.json(user);
+    response.json(user); //TODO hide password
   }
 
   async getById(request: Request, response: Response, next: NextFunction) {
     const { id } = request.params;
 
-    const user = await this.prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id },
     });
 
-    response.json(user);
+    response.json(user); //TODO hide password
   }
 }

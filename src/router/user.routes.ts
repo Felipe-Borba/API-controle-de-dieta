@@ -9,6 +9,7 @@ router.post(
   "/",
   body("name").optional(),
   body("email", "email is required").notEmpty(),
+  body("password", "password is required").notEmpty(),
   controller.create
 );
 

@@ -1,20 +1,21 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
+import AuthController from "../controller/authController";
 import ensureAuthenticated from "../middlewares/ensureAuthenticated";
-import { NextFunction, Request, Response } from "express";
 
 const routes = Router();
+const controller = new AuthController();
 
 // Rotas
 routes.get("/public", (request: Request, response: Response) => {
-  response.status(200).send("funcionou");
+  response.status(200).json({ message: "funcionou" });
 });
 
 routes.get(
   "/private",
   ensureAuthenticated,
   (request: Request, response: Response) => {
-    response.status(200).send("funcionou");
+    response.status(200).json({ message: "funcionou" });
   }
 );
 
@@ -25,6 +26,8 @@ routes.post(
     response.status(200).send({ token: null });
   }
 );
+
+routes.post("/login", controller.login);
 
 routes.get("/me", function (request: Request, response: Response) {
   const authHeader = request.headers.authorization;
@@ -55,5 +58,4 @@ routes.get("/me", function (request: Request, response: Response) {
   }
 });
 
-// Exporta
-module.exports = routes;
+export default routes;

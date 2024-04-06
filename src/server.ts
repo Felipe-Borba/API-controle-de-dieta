@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import app from "./app";
 
 app.get("/", (request: Request, response: Response) => {
-  response.send("Hello World!");
+  response.json({ message: "Hello World!" });
 });
 
 const PORT = process.env.PORT ?? 8080;

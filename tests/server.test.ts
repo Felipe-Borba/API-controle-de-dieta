@@ -1,13 +1,14 @@
-const supertest = require("supertest");
+import { log } from "console";
 
-const request = supertest("http://localhost:8080");
+const supertest = require("supertest");
+const request = supertest("http://localhost:3333");
 
 describe("server", () => {
   test("GET /", async () => {
     const result = await request.get("/");
 
     expect(result.status).toBe(200);
-    expect(result.body).toEqual("Hello World!");
+    expect(result.body).toEqual({ message: "Hello World!" });
   });
 });
 

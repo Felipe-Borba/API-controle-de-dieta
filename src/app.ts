@@ -7,7 +7,7 @@ app.use(router);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.log(`${req.method} ${req.baseUrl} - ${err.message}`);
-  res.status(400).send({ error: err.message });
+  res.status(400).send({ message: err.message });
 });
 
 export default app;
