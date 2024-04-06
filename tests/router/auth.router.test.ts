@@ -1,12 +1,11 @@
-import { PrismaClient } from "@prisma/client";
-import { sign, verify } from "jsonwebtoken";
+import { verify } from "jsonwebtoken";
 import supertest from "supertest";
+import { getUserTokenByEmail } from "../utils";
 
 const request = supertest("http://localhost:3333");
-const prisma = new PrismaClient();
 
-describe("/auth", () => {
-  describe("GET /public", () => {
+describe("auth router", () => {
+  describe("GET /auth/public", () => {
     test("given user unauthenticated, should return ok", async () => {
       const result = await request.get("/auth/public");
 
@@ -15,14 +14,9 @@ describe("/auth", () => {
     });
   });
 
-  describe("/login", () => {
+  describe("POST /auth/login", () => {
     test("given correct credentials, should return jwt token", async () => {
-      const user = await prisma.user.findUniqueOrThrow({
-        where: { email: "dev@email.com" },
-      });
-      const token = sign({ user }, "development", {
-        expiresIn: 86400, // expira em 24 horas
-      });
+      const token = await getUserTokenByEmail("dev@email.com");
 
       const result = await request
         .post("/auth/login")
@@ -33,8 +27,6 @@ describe("/auth", () => {
     });
 
     test("given worng credentials, should return error", async () => {
-      const userRes = await request.get("/user/");
-
       const result = await request
         .post("/auth/login")
         .send({ email: "dev@email.com", password: "invalid" });
@@ -44,7 +36,7 @@ describe("/auth", () => {
     });
   });
 
-  describe("GET /private", () => {
+  describe("GET /auth/private", () => {
     test("given user unauthenticated, should return unauthorized", async () => {
       const result = await request.get("/auth/private");
 
@@ -53,12 +45,7 @@ describe("/auth", () => {
     });
 
     test("given user authenticated, should return ok", async () => {
-      const user = await prisma.user.findUniqueOrThrow({
-        where: { email: "dev@email.com" },
-      });
-      const token = sign({ user }, "development", {
-        expiresIn: 86400, // expira em 24 horas
-      });
+      const token = await getUserTokenByEmail("dev@email.com");
 
       const result = await request
         .get("/auth/private")
@@ -69,7 +56,7 @@ describe("/auth", () => {
     });
   });
 
-  describe("GET /me", () => {
+  describe("GET /auth/me", () => {
     test("given user unauthenticated, should return error", async () => {
       const result = await request.get("/auth/me");
 
@@ -78,12 +65,7 @@ describe("/auth", () => {
     });
 
     test("given user authenticated, should return jwt decrypted", async () => {
-      const user = await prisma.user.findUniqueOrThrow({
-        where: { email: "dev@email.com" },
-      });
-      const token = sign({ user }, "development", {
-        expiresIn: 86400, // expira em 24 horas
-      });
+      const token = await getUserTokenByEmail("dev@email.com");
       const jwtPayload = verify(token, "development");
 
       const result = await request

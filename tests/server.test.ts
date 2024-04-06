@@ -1,6 +1,5 @@
-import { log } from "console";
+import supertest from "supertest";
 
-const supertest = require("supertest");
 const request = supertest("http://localhost:3333");
 
 describe("server", () => {
