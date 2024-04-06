@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import { Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
 import AuthController from "../controller/authController";
@@ -29,33 +30,15 @@ routes.post(
 
 routes.post("/login", controller.login);
 
-routes.get("/me", function (request: Request, response: Response) {
-  const authHeader = request.headers.authorization;
-  const auth = authHeader;
-
-  if (!auth) {
-    return response.status(401).json({
-      message: "Falha ao autenticar o token.",
-    });
+routes.get(
+  "/me",
+  ensureAuthenticated,
+  function (
+    request: Request<{ user: User; iat?: number; exp?: number }>,
+    response: Response
+  ) {
+    return response.status(200).json(request.params);
   }
-
-  const [, token] = auth.split(" ");
-
-  if (!token) {
-    return response
-      .status(401)
-      .json({ auth: false, message: "Nenhum token informado." });
-  }
-
-  try {
-    const jwtPayload = jwt.verify(token, process.env.AUTH_SECRET!);
-
-    return response.status(200).json(jwtPayload);
-  } catch (error) {
-    return response.status(401).json({
-      message: "Falha ao autenticar o token.",
-    });
-  }
-});
+);
 
 export default routes;

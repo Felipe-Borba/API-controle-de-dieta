@@ -60,8 +60,8 @@ describe("auth router", () => {
     test("given user unauthenticated, should return error", async () => {
       const result = await request.get("/auth/me");
 
-      expect(result.status).toBe(401);
-      expect(result.body).toEqual({ message: "Falha ao autenticar o token." });
+      expect(result.status).toBe(403);
+      expect(result.body).toEqual({ message: "jwt token não informado" });
     });
 
     test("given user authenticated, should return jwt decrypted", async () => {
