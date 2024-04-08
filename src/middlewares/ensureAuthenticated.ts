@@ -1,7 +1,6 @@
 const { JwtPayload, verify } = require("jsonwebtoken");
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
-import { User } from "../model/user";
 
 export default function ensureAuthenticated(
   request: Request<{ user: any; iat: any; exp: any }>,

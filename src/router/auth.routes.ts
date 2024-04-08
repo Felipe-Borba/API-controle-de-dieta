@@ -1,6 +1,5 @@
 import { User } from "@prisma/client";
 import { Request, Response, Router } from "express";
-import jwt from "jsonwebtoken";
 import AuthController from "../controller/authController";
 import ensureAuthenticated from "../middlewares/ensureAuthenticated";
 
