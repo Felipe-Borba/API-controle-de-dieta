@@ -36,4 +36,6 @@ router.get("/", ensureAuthenticated, controller.list);
 
 router.get("/:id", ensureAuthenticated, controller.getById);
 
+router.get("/metrics", ensureAuthenticated, controller.getMetrics);
+
 export default router;

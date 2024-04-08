@@ -13,7 +13,7 @@ export default class MealController {
     const user = request.params.user;
 
     const meal = await prisma.meal.create({
-      data: { name, data, diet, description, userId: user.id },
+      data: { name, data: new Date(data), diet, description, userId: user.id },
     });
 
     response.json(meal);
@@ -29,14 +29,14 @@ export default class MealController {
 
     const meal = await prisma.meal.update({
       where: { id, userId: user.id },
-      data: { name, data, description, diet },
+      data: { name, data: new Date(data), description, diet },
     });
 
     response.json(meal);
   }
 
   async delete(
-    request: Request<{ user: User; id: string }>,
+    request: Request<{ user: User; id?: string }>,
     response: Response,
     next: NextFunction
   ) {
@@ -62,7 +62,7 @@ export default class MealController {
   }
 
   async getById(
-    request: Request<{ user: User; id: string }>,
+    request: Request<{ user: User; id?: string }>,
     response: Response,
     next: NextFunction
   ) {
@@ -73,5 +73,47 @@ export default class MealController {
     });
 
     response.json(meal);
+  }
+
+  async getMetrics(
+    request: Request<{ user: User }>,
+    response: Response,
+    next: NextFunction
+  ) {
+    const { user } = request.params;
+
+    const totalMeal = await prisma.meal.count({ where: { userId: user.id } });
+
+    const totalOnDietMeal = await prisma.meal.count({
+      where: { userId: user.id, diet: true },
+    });
+
+    const totalOfDietMeal = await prisma.meal.count({
+      where: { userId: user.id, diet: false },
+    });
+
+    let onDietStreak = 0;
+
+    const lastOutOfDiet = await prisma.meal.findFirst({
+      where: { diet: false },
+      orderBy: { data: "asc" },
+    });
+
+    if (lastOutOfDiet) {
+      onDietStreak = await prisma.meal.count({
+        where: {
+          userId: user.id,
+          data: { gt: lastOutOfDiet.data },
+          diet: true,
+        },
+      });
+    }
+
+    response.json({
+      totalMeal,
+      totalOnDietMeal,
+      totalOfDietMeal,
+      onDietStreak,
+    });
   }
 }
