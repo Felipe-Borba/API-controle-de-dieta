@@ -14,19 +14,19 @@ describe("User router", () => {
     const token = getUserTokenByEmail("dev@email.com");
   });
 
-  describe("Create user", () => {
-    beforeEach(async () => {
-      const user = await prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (user) {
-        await prisma.user.delete({
-          where: { email },
-        });
-      }
+  beforeEach(async () => {
+    const user = await prisma.user.findUnique({
+      where: { email },
     });
 
+    if (user) {
+      await prisma.user.delete({
+        where: { email },
+      });
+    }
+  });
+
+  describe("Create user", () => {
     test("Given all params then should create a user", async () => {
       const result = await request
         .post("/user/")
@@ -48,18 +48,48 @@ describe("User router", () => {
   });
 
   describe("Update user", () => {
-    test("Given XX  then XX", async () => {});
+    test("Given XX  then XX", async () => {
+      await request.post("/user/").send({ name, email, password });
+
+      const result = await request
+        .post("/user/")
+        .send({ name: "updated", email: "new@email.com" });
+
+      console.log(result.status, result.body);
+    });
   });
 
   describe("Delete user", () => {
-    test("Given XX  then XX", async () => {});
+    test("Given XX  then XX", async () => {
+      const userRes = await request
+        .post("/user/")
+        .send({ name, email, password });
+
+      const result = await request.delete(`/user/${userRes.body.id}`);
+
+      console.log(result.status, result.body);
+    });
   });
 
   describe("List user", () => {
-    test("Given XX  then XX", async () => {});
+    test("Given XX  then XX", async () => {
+      await request.post("/user/").send({ name, email, password });
+
+      const result = await request.get("/user/");
+
+      console.log(result.status, result.body);
+    });
   });
 
   describe("Get by id user", () => {
-    test("Given XX  then XX", async () => {});
+    test("Given XX  then XX", async () => {
+      const userRes = await request
+        .post("/user/")
+        .send({ name, email, password });
+
+      const result = await request.get(`/user/${userRes.body.id}`);
+
+      console.log(result.status, result.body);
+    });
   });
 });

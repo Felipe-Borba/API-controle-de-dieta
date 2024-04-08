@@ -17,12 +17,12 @@ export default class UserController {
   }
 
   async update(request: Request, response: Response, next: NextFunction) {
-    const { name, email, id, password } = request.body;
+    const { name, email, id } = request.body;
 
     //TODO como fica a regra de atualização dos dados dos usuários?
     const user = await prisma.user.update({
       where: { id },
-      data: { name, email, password },
+      data: { name, email },
     });
 
     response.json(user); // TODO hide password
