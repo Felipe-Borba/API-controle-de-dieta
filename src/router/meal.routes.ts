@@ -34,8 +34,9 @@ router.delete("/:id", ensureAuthenticated, controller.delete);
 
 router.get("/", ensureAuthenticated, controller.list);
 
+router.get("/metrics", ensureAuthenticated, controller.getMetrics);
+
 router.get("/:id", ensureAuthenticated, controller.getById);
 
-router.get("/metrics", ensureAuthenticated, controller.getMetrics);
 
 export default router;
