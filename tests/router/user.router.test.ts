@@ -1,12 +1,12 @@
-import { prisma, request } from "../utils";
+import { getUserTokenByEmail, prisma, request } from "../utils";
 
 describe("User router", () => {
   const name = "test";
   const email = "test@email.com";
   const password = "123123123";
 
-  beforeAll(async () => {
-    await prisma.user.deleteMany();
+  beforeEach(async () => {
+    await prisma.user.deleteMany({ where: { name: "*" } });
   });
 
   describe("Create user", () => {
@@ -30,22 +30,22 @@ describe("User router", () => {
     });
   });
 
-  // describe("Update user", () => {
-  //   test("Given authenticated user then should update user data by id", async () => {
-  //     const user = await request.post("/user/").send({ name, email, password });
-  //     const token = await getUserTokenByEmail(email);
+  describe("Update user", () => {
+    test("Given authenticated user then should update user data by id", async () => {
+      const user = await request.post("/user/").send({ name, email, password });
+      const token = await getUserTokenByEmail(email);
 
-  //     const result = await request
-  //       .put("/user/")
-  //       .set("authorization", `Bearer ${token}`)
-  //       .send({ id: user.body.id, name: "updated", email: "new@email.com" });
+      const result = await request
+        .put("/user/")
+        .set("authorization", `Bearer ${token}`)
+        .send({ id: user.body.id, name: "updated", email: "new@email.com" });
 
-  //     expect(result.status).toBe(200);
-  //     expect(result.body.name).toEqual("updated");
-  //     expect(result.body.email).toEqual("new@email.com");
-  //     expect(result.body.password).toEqual(user.body.password);
-  //   });
-  // });
+      expect(result.status).toBe(200);
+      expect(result.body.name).toEqual("updated");
+      expect(result.body.email).toEqual("new@email.com");
+      expect(result.body.password).toEqual(user.body.password);
+    });
+  });
 
   // describe("Delete user", () => {
   //   test("Given XX  then XX", async () => {
