@@ -5,12 +5,10 @@ describe("User router", () => {
   const email = "test@email.com";
   const password = "123123123";
 
-  beforeEach(async () => {
-    await prisma.user.deleteMany({ where: { name: "*" } });
-  });
-
   describe("Create user", () => {
     test("Given all params then should create a user", async () => {
+      await prisma.user.deleteMany({ where: { email } });
+
       const result = await request
         .post("/user/")
         .send({ name, email, password });
@@ -21,6 +19,8 @@ describe("User router", () => {
     });
 
     test("Given no params should return error with required params", async () => {
+      await prisma.user.deleteMany({ where: { email } });
+
       const result = await request.post("/user/").send({});
 
       expect(result.status).toBe(400);
@@ -32,6 +32,7 @@ describe("User router", () => {
 
   describe("Update user", () => {
     test("Given authenticated user then should update user data by id", async () => {
+      await prisma.user.deleteMany({ where: { email } });
       const user = await request.post("/user/").send({ name, email, password });
       const token = await getUserTokenByEmail(email);
 
@@ -47,17 +48,21 @@ describe("User router", () => {
     });
   });
 
-  // describe("Delete user", () => {
-  //   test("Given XX  then XX", async () => {
-  //     const userRes = await request
-  //       .post("/user/")
-  //       .send({ name, email, password });
+  describe("Delete user", () => {
+    test("Given XX  then XX", async () => {
+      await prisma.user.deleteMany({ where: { email } });
+      await request.post("/user/").send({ name, email, password });
+      const token = await getUserTokenByEmail(email);
+      const userRes = await request
+        .post("/user/")
+        .set("authorization", `Bearer ${token}`)
+        .send({ name, email, password });
 
-  //     const result = await request.delete(`/user/${userRes.body.id}`);
+      const result = await request.delete(`/user/${userRes.body.id}`);
 
-  //     console.log(result.status, result.body);
-  //   });
-  // });
+      console.log(result.status, result.body);
+    });
+  });
 
   // describe("List user", () => {
   //   test("Given XX  then XX", async () => {

@@ -80,7 +80,10 @@ export default class MealController {
     try {
       const { user } = request.params;
 
-      const meal = await prisma.meal.findMany({ where: { userId: user.id } });
+      const meal = await prisma.meal.findMany({
+        where: { userId: user.id },
+        orderBy: { data: "desc" },
+      });
 
       response.json(meal);
     } catch (error) {
