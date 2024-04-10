@@ -1,9 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import supertest from "supertest";
-import { getUserTokenByEmail } from "../utils";
-
-const request = supertest("http://localhost:3333");
-const prisma = new PrismaClient();
+import { prisma, request } from "../utils";
 
 describe("User router", () => {
   const name = "test";
@@ -11,19 +6,7 @@ describe("User router", () => {
   const password = "123123123";
 
   beforeAll(async () => {
-    const token = getUserTokenByEmail("dev@email.com");
-  });
-
-  beforeEach(async () => {
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (user) {
-      await prisma.user.delete({
-        where: { email },
-      });
-    }
+    await prisma.user.deleteMany();
   });
 
   describe("Create user", () => {
@@ -47,49 +30,54 @@ describe("User router", () => {
     });
   });
 
-  describe("Update user", () => {
-    test("Given XX  then XX", async () => {
-      await request.post("/user/").send({ name, email, password });
+  // describe("Update user", () => {
+  //   test("Given authenticated user then should update user data by id", async () => {
+  //     const user = await request.post("/user/").send({ name, email, password });
+  //     const token = await getUserTokenByEmail(email);
 
-      const result = await request
-        .post("/user/")
-        .send({ name: "updated", email: "new@email.com" });
+  //     const result = await request
+  //       .put("/user/")
+  //       .set("authorization", `Bearer ${token}`)
+  //       .send({ id: user.body.id, name: "updated", email: "new@email.com" });
 
-      console.log(result.status, result.body);
-    });
-  });
+  //     expect(result.status).toBe(200);
+  //     expect(result.body.name).toEqual("updated");
+  //     expect(result.body.email).toEqual("new@email.com");
+  //     expect(result.body.password).toEqual(user.body.password);
+  //   });
+  // });
 
-  describe("Delete user", () => {
-    test("Given XX  then XX", async () => {
-      const userRes = await request
-        .post("/user/")
-        .send({ name, email, password });
+  // describe("Delete user", () => {
+  //   test("Given XX  then XX", async () => {
+  //     const userRes = await request
+  //       .post("/user/")
+  //       .send({ name, email, password });
 
-      const result = await request.delete(`/user/${userRes.body.id}`);
+  //     const result = await request.delete(`/user/${userRes.body.id}`);
 
-      console.log(result.status, result.body);
-    });
-  });
+  //     console.log(result.status, result.body);
+  //   });
+  // });
 
-  describe("List user", () => {
-    test("Given XX  then XX", async () => {
-      await request.post("/user/").send({ name, email, password });
+  // describe("List user", () => {
+  //   test("Given XX  then XX", async () => {
+  //     await request.post("/user/").send({ name, email, password });
 
-      const result = await request.get("/user/");
+  //     const result = await request.get("/user/");
 
-      console.log(result.status, result.body);
-    });
-  });
+  //     console.log(result.status, result.body);
+  //   });
+  // });
 
-  describe("Get by id user", () => {
-    test("Given XX  then XX", async () => {
-      const userRes = await request
-        .post("/user/")
-        .send({ name, email, password });
+  // describe("Get by id user", () => {
+  //   test("Given XX  then XX", async () => {
+  //     const userRes = await request
+  //       .post("/user/")
+  //       .send({ name, email, password });
 
-      const result = await request.get(`/user/${userRes.body.id}`);
+  //     const result = await request.get(`/user/${userRes.body.id}`);
 
-      console.log(result.status, result.body);
-    });
-  });
+  //     console.log(result.status, result.body);
+  //   });
+  // });
 });

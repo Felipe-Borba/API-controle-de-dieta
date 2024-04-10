@@ -1,10 +1,13 @@
 import { verify } from "jsonwebtoken";
-import supertest from "supertest";
-import { getUserTokenByEmail } from "../utils";
-
-const request = supertest("http://localhost:3333");
+import { getUserTokenByEmail, request } from "../utils";
 
 describe("auth router", () => {
+  beforeAll(async () => {
+    await request
+      .post("/user/")
+      .send({ name: "test", email: "dev@email.com", password: "123123123" });
+  });
+
   describe("GET /auth/public", () => {
     test("given user unauthenticated, should return ok", async () => {
       const result = await request.get("/auth/public");
@@ -26,7 +29,7 @@ describe("auth router", () => {
       expect(result.body).toEqual({ token });
     });
 
-    test("given worng credentials, should return error", async () => {
+    test("given wrong credentials, should return error", async () => {
       const result = await request
         .post("/auth/login")
         .send({ email: "dev@email.com", password: "invalid" });

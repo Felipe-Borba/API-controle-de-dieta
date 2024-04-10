@@ -1,7 +1,9 @@
 import { PrismaClient } from "@prisma/client";
-import { sign, verify } from "jsonwebtoken";
+import { sign } from "jsonwebtoken";
+import supertest from "supertest";
+import app from "../src/app";
 
-const prisma = new PrismaClient();
+export const prisma = new PrismaClient();
 
 export const getUserTokenByEmail = async (email: string) => {
   const user = await prisma.user.findUniqueOrThrow({
@@ -14,3 +16,5 @@ export const getUserTokenByEmail = async (email: string) => {
 
   return token;
 };
+
+export const request = supertest(app);

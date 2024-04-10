@@ -1,6 +1,5 @@
-import supertest from "supertest";
+import { request } from "./utils";
 
-const request = supertest("http://localhost:3333");
 
 describe("server", () => {
   test("GET /", async () => {
