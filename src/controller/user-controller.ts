@@ -45,7 +45,7 @@ export default class UserController {
         where: { id },
       });
 
-      response.json(user); //TODO hide password
+      response.status(204);
     } catch (error) {
       return next(error);
     }
