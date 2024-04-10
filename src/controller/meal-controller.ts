@@ -1,4 +1,5 @@
 import { PrismaClient, User } from "@prisma/client";
+import { log } from "console";
 import { NextFunction, Request, Response } from "express";
 
 const prisma = new PrismaClient();
@@ -19,7 +20,11 @@ export default class MealController {
           data: new Date(data),
           diet,
           description,
-          userId: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
         },
       });
 
