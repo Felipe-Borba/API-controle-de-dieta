@@ -20,7 +20,7 @@ router.put(
   "/",
   ensureAuthenticated,
   body("id", "id is required").notEmpty(),
-  body("name").optional(),
+  body("name").notEmpty(),
   body("email", "email is required").notEmpty(),
   validate,
   controller.update
