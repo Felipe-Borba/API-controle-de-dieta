@@ -142,6 +142,10 @@ export default class MealController {
             diet: true,
           },
         });
+      } else {
+        onDietStreak = await prisma.meal.count({
+          where: { userId: user.id, diet: true },
+        });
       }
 
       return response.json({

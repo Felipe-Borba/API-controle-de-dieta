@@ -1,6 +1,4 @@
-import { User } from "@prisma/client";
 import { prisma, request } from "../utils";
-import { send } from "process";
 
 describe("Meal router", () => {
   const email = "test@email.com";
@@ -10,13 +8,25 @@ describe("Meal router", () => {
   const mealBody1 = {
     name: "Polenta",
     description: "gostosa",
-    data: new Date().toISOString(),
+    data: new Date("2024-04-10").toISOString(),
     diet: false,
   };
   const mealBody2 = {
     name: "whey",
     description: "birl",
-    data: new Date().toISOString(),
+    data: new Date("2024-04-11").toISOString(),
+    diet: true,
+  };
+  const mealBody3 = {
+    name: "peach",
+    description: "juicy",
+    data: new Date("2024-04-12").toISOString(),
+    diet: true,
+  };
+  const mealBody4 = {
+    name: "apple",
+    description: "green",
+    data: new Date("2024-04-13").toISOString(),
     diet: true,
   };
 
@@ -141,7 +151,7 @@ describe("Meal router", () => {
   });
 
   describe("List meal", () => {
-    test("Given valid jwt then return list of meals ordered by email", async () => {
+    test("Given valid jwt then return list of meals ordered by date", async () => {
       const mealRes1 = await request
         .post("/meal/")
         .set("authorization", `Bearer ${token}`)
@@ -157,7 +167,7 @@ describe("Meal router", () => {
         .send();
 
       expect(result.status).toBe(200);
-      expect(result.body).toEqual([mealRes1.body, mealRes2.body]);
+      expect(result.body).toEqual([mealRes2.body, mealRes1.body]);
     });
   });
 
@@ -177,23 +187,71 @@ describe("Meal router", () => {
       expect(result.body).toEqual(mealRes.body);
     });
 
-    // test("Given invalid id then should return null", async () => {
-    //   const userRes = await request
-    //     .post("/user/")
-    //     .send({ name, email, password });
-    //   const id: string = userRes.body.id;
-    //   const tokenRes = await request
-    //     .post("/auth/login")
-    //     .send({ email, password });
+    test("Given invalid id then should return null", async () => {
+      const result = await request
+        .get(`/meal/${1231231}`)
+        .set("authorization", `Bearer ${token}`);
 
-    //   const result = await request
-    //     .get(`/meal/${id.slice(-1)}`)
-    //     .set("authorization", `Bearer ${tokenRes.body.token}`);
-
-    //   expect(result.status).toBe(200);
-    //   expect(result.body).toBeNull();
-    // });
+      expect(result.status).toBe(200);
+      expect(result.body).toBeNull();
+    });
   });
 
-  // describe("Get meal metrics", async () => {})
+  describe("Get meal metrics", () => {
+    test("Given only on diet meals then return correct metric", async () => {
+      await request
+        .post("/meal/")
+        .set("authorization", `Bearer ${token}`)
+        .send({ ...mealBody1, diet: true });
+      await request
+        .post("/meal/")
+        .set("authorization", `Bearer ${token}`)
+        .send({ ...mealBody2, diet: true });
+
+      const result = await request
+        .get("/meal/metrics")
+        .set("authorization", `Bearer ${token}`)
+        .send();
+
+      expect(result.status).toBe(200);
+      expect(result.body).toEqual({
+        totalMeal: 2,
+        onDietStreak: 2,
+        totalOfDietMeal: 0,
+        totalOnDietMeal: 2,
+      });
+    });
+
+    test("Given list of meals on and off diet then return correct metric", async () => {
+      await request
+        .post("/meal/")
+        .set("authorization", `Bearer ${token}`)
+        .send({ ...mealBody1, diet: true });
+      await request
+        .post("/meal/")
+        .set("authorization", `Bearer ${token}`)
+        .send({ ...mealBody2, diet: false });
+      await request
+        .post("/meal/")
+        .set("authorization", `Bearer ${token}`)
+        .send({ ...mealBody3, diet: true });
+      await request
+        .post("/meal/")
+        .set("authorization", `Bearer ${token}`)
+        .send({ ...mealBody4, diet: true });
+
+      const result = await request
+        .get("/meal/metrics")
+        .set("authorization", `Bearer ${token}`)
+        .send();
+
+      expect(result.status).toBe(200);
+      expect(result.body).toEqual({
+        totalMeal: 4,
+        onDietStreak: 2,
+        totalOfDietMeal: 1,
+        totalOnDietMeal: 3,
+      });
+    });
+  });
 });
