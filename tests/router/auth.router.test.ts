@@ -1,8 +1,10 @@
 import { verify } from "jsonwebtoken";
-import { getUserTokenByEmail, request } from "../utils";
+import { getUserTokenByEmail, prisma, request } from "../utils";
 
 describe("auth router", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
+    await prisma.meal.deleteMany();
+    await prisma.user.deleteMany();
     await request
       .post("/user/")
       .send({ name: "test", email: "dev@email.com", password: "123123123" });

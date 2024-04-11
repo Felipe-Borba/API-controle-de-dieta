@@ -14,7 +14,7 @@ export default class UserController {
         data: { name, email, password: hashedPassword },
       });
 
-      response.json(user); // TODO hide password
+      return response.json(user);
     } catch (error) {
       return next(error);
     }
@@ -24,13 +24,12 @@ export default class UserController {
     try {
       const { name, email, id } = request.body;
 
-      //TODO como fica a regra de atualização dos dados dos usuários?
       const user = await prisma.user.update({
         where: { id },
         data: { name, email },
       });
 
-      response.json(user); // TODO hide password
+      return response.json(user);
     } catch (error) {
       return next(error);
     }
@@ -40,12 +39,11 @@ export default class UserController {
     try {
       const { id } = request.params;
 
-      //TODO quem tem permissão de deletar um usuário?
       const user = await prisma.user.delete({
         where: { id },
       });
 
-      response.status(204);
+      return response.status(204).json({});
     } catch (error) {
       return next(error);
     }
@@ -53,10 +51,11 @@ export default class UserController {
 
   async list(request: Request, response: Response, next: NextFunction) {
     try {
-      //TODO quem pode ver a listagem dos usuários?
-      const user = await prisma.user.findMany();
+      const user = await prisma.user.findMany({ orderBy: { email: "asc" } });
 
-      response.json(user); //TODO hide password
+      return response.json(
+        user.map((a) => ({ id: a.id, name: a.name, email: a.email }))
+      );
     } catch (error) {
       return next(error);
     }
@@ -64,14 +63,13 @@ export default class UserController {
 
   async getById(request: Request, response: Response, next: NextFunction) {
     try {
-      //TODO qualquer pessoa pode visualizar qualquer usuário?
       const { id } = request.params;
 
       const user = await prisma.user.findUnique({
         where: { id },
       });
 
-      response.json(user); //TODO hide password
+      return response.json(user);
     } catch (error) {
       return next(error);
     }

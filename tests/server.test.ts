@@ -1,4 +1,4 @@
-import { request } from "./utils";
+import { prisma, request } from "./utils";
 
 
 describe("server", () => {
