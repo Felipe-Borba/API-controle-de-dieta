@@ -66,7 +66,7 @@ export default class MealController {
         where: { id, userId: user.id },
       });
 
-      response.json(meal);
+      return response.status(204).json({});
     } catch (error) {
       return next(error);
     }
