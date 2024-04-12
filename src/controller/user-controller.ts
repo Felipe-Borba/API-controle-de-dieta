@@ -6,6 +6,11 @@ const prisma = new PrismaClient();
 
 export default class UserController {
   async create(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Users']
+     * #swagger.summary = 'Returns a user by id'
+     * #swagger.description = 'This endpoint will return a user by id...'
+     */
     try {
       const { name, email, password } = request.body;
 
@@ -21,6 +26,12 @@ export default class UserController {
   }
 
   async update(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Users']
+     * #swagger.summary = 'Returns a user by id'
+     * #swagger.description = 'This endpoint will return a user by id...'
+     */
+
     try {
       const { name, email, id } = request.body;
 
@@ -36,6 +47,12 @@ export default class UserController {
   }
 
   async delete(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Users']
+     * #swagger.summary = 'Returns a user by id'
+     * #swagger.description = 'This endpoint will return a user by id...'
+     */
+
     try {
       const { id } = request.params;
 
@@ -50,6 +67,12 @@ export default class UserController {
   }
 
   async list(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Users']
+     * #swagger.summary = 'Returns a user by id'
+     * #swagger.description = 'This endpoint will return a user by id...'
+     */
+
     try {
       const user = await prisma.user.findMany({ orderBy: { email: "asc" } });
 
@@ -62,6 +85,12 @@ export default class UserController {
   }
 
   async getById(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Users']
+     * #swagger.summary = 'Returns a user by id'
+     * #swagger.description = 'This endpoint will return a user by id...'
+     */
+
     try {
       const { id } = request.params;
 

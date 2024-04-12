@@ -7,6 +7,12 @@ const prisma = new PrismaClient();
 
 export default class AuthController {
   async login(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Auth']
+     * #swagger.summary = 'Sign in user'
+     * #swagger.description = 'This endpoint will return auth token'
+     */
+
     try {
       const { email, password } = request.body;
 

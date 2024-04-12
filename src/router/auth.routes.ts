@@ -6,7 +6,7 @@ import ensureAuthenticated from "../middlewares/ensureAuthenticated";
 const routes = Router();
 const controller = new AuthController();
 
-// Rotas
+//TODO move to controller all these routes
 routes.get("/public", (request: Request, response: Response) => {
   response.status(200).json({ message: "funcionou" });
 });

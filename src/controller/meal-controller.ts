@@ -1,15 +1,18 @@
 import { PrismaClient, User } from "@prisma/client";
-import { log } from "console";
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request as _Request, Response } from "express";
 
 const prisma = new PrismaClient();
+//TODO swagger have some issue to find metadata when using Request<{ user: User }> directly
+type Request = _Request<{ user: User; id?: string }>;
 
 export default class MealController {
-  async create(
-    request: Request<{ user: User }>,
-    response: Response,
-    next: NextFunction
-  ) {
+  async create(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Meals']
+     * #swagger.summary = 'Create a meal'
+     * #swagger.description = 'This endpoint will return created meal'
+     */
+
     try {
       const { name, description, data, diet } = request.body;
       const user = request.params.user;
@@ -34,11 +37,13 @@ export default class MealController {
     }
   }
 
-  async update(
-    request: Request<{ user: User }>,
-    response: Response,
-    next: NextFunction
-  ) {
+  async update(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Meals']
+     * #swagger.summary = 'Create a meal'
+     * #swagger.description = 'This endpoint will return a user by id...'
+     */
+
     try {
       const { id, name, description, data, diet } = request.body;
       const { user } = request.params;
@@ -54,11 +59,13 @@ export default class MealController {
     }
   }
 
-  async delete(
-    request: Request<{ user: User; id?: string }>,
-    response: Response,
-    next: NextFunction
-  ) {
+  async delete(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Meals']
+     * #swagger.summary = 'Create a meal'
+     * #swagger.description = 'This endpoint will return a user by id...'
+     */
+
     try {
       const { id, user } = request.params;
 
@@ -72,11 +79,13 @@ export default class MealController {
     }
   }
 
-  async list(
-    request: Request<{ user: User }>,
-    response: Response,
-    next: NextFunction
-  ) {
+  async list(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Meals']
+     * #swagger.summary = 'Create a meal'
+     * #swagger.description = 'This endpoint will return a user by id...'
+     */
+
     try {
       const { user } = request.params;
 
@@ -91,11 +100,13 @@ export default class MealController {
     }
   }
 
-  async getById(
-    request: Request<{ user: User; id?: string }>,
-    response: Response,
-    next: NextFunction
-  ) {
+  async getById(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Meals']
+     * #swagger.summary = 'Create a meal'
+     * #swagger.description = 'This endpoint will return a user by id...'
+     */
+
     try {
       const { id, user } = request.params;
 
@@ -109,11 +120,13 @@ export default class MealController {
     }
   }
 
-  async getMetrics(
-    request: Request<{ user: User }>,
-    response: Response,
-    next: NextFunction
-  ) {
+  async getMetrics(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Meals']
+     * #swagger.summary = 'Create a meal'
+     * #swagger.description = 'This endpoint will return a user by id...'
+     */
+
     try {
       const { user } = request.params;
 
