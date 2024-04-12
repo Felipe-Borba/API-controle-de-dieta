@@ -1,9 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { compare } from "bcryptjs";
-import { NextFunction, Request, Response } from "express";
+import { Request as _Request, NextFunction, Response } from "express";
 import { sign } from "jsonwebtoken";
 
 const prisma = new PrismaClient();
+type Request = _Request<{ user?: User; iat?: number; exp?: number }>;
 
 export default class AuthController {
   async login(request: Request, response: Response, next: NextFunction) {
@@ -35,6 +36,54 @@ export default class AuthController {
       });
 
       return response.status(200).json({ token });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async public(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Auth']
+     */
+
+    try {
+      return response.status(200).json({ message: "funcionou" });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async private(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Auth']
+     */
+
+    try {
+      return response.status(200).json({ message: "funcionou" });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async logout(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Auth']
+     */
+
+    try {
+      return response.status(200).send({ token: null });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async me(request: Request, response: Response, next: NextFunction) {
+    /**
+     * #swagger.tags = ['Auth']
+     */
+
+    try {
+      return response.status(200).json(request.params);
     } catch (error) {
       return next(error);
     }

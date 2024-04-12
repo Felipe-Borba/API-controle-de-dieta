@@ -6,38 +6,10 @@ import ensureAuthenticated from "../middlewares/ensureAuthenticated";
 const routes = Router();
 const controller = new AuthController();
 
-//TODO move to controller all these routes
-routes.get("/public", (request: Request, response: Response) => {
-  response.status(200).json({ message: "funcionou" });
-});
-
-routes.get(
-  "/private",
-  ensureAuthenticated,
-  (request: Request, response: Response) => {
-    response.status(200).json({ message: "funcionou" });
-  }
-);
-
-routes.post(
-  "/logout",
-  ensureAuthenticated,
-  (request: Request, response: Response) => {
-    response.status(200).send({ token: null });
-  }
-);
-
+routes.get("/public", controller.public);
+routes.get("/private", ensureAuthenticated, controller.private);
+routes.post("/logout", ensureAuthenticated, controller.logout);
 routes.post("/login", controller.login);
-
-routes.get(
-  "/me",
-  ensureAuthenticated,
-  function (
-    request: Request<{ user: User; iat?: number; exp?: number }>,
-    response: Response
-  ) {
-    return response.status(200).json(request.params);
-  }
-);
+routes.get("/me", ensureAuthenticated, controller.me);
 
 export default routes;
